@@ -1,0 +1,47 @@
+.Toolbar{
+    text-align: center;
+    text-decoration: none;
+    background-color: #ecf0f1;
+    display: flex;
+    justify-content: space-around;
+}
+
+
+.Toolbar button {
+    text-align: center;
+    width: 100%;
+    margin: 1vh;
+    outline: none;
+    text-decoration: none;
+    background-color: #ecf0f1;
+    border: none;
+    color: Black;
+    padding: 15px 32px;
+    display: inline-block;
+    font-size: 1.5em;
+}
+
+.Toolbar button:hover{
+    transition-duration: 0.5s;
+    background-color: #bdc3c7;
+}
+
+
+#start {
+    background-color:#e74c3c;
+    border-radius:28px;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-size: 1.5em;
+    padding:10px 76px;
+    text-decoration:none;
+}
+#start:hover {
+    background-color:#c0392b;
+}
+#start:active {
+    position:relative;
+    top:2px;
+}
+
