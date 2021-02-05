@@ -8,6 +8,7 @@ import Graph from "./Components/Graph/Graph";
 
 import Bubblesort from "./Algorithms/Bubblesort";
 import SelectionSort from "./Algorithms/Selectionsort";
+import Bottombar from "./Components/Toolbars/Bottombar";
 
 export default class App extends React.Component {
 
@@ -18,6 +19,10 @@ export default class App extends React.Component {
             data: [],
             sort: false,
             algorithms: [],
+            speed: 75,
+            decoration: "bars",
+            graphID: 0, //Keeps track of latest graph ID which has been assigned
+            reset : false,
         }
     }
 
@@ -28,6 +33,8 @@ export default class App extends React.Component {
 
 
     generateData = () =>{
+        this.setState({sort: false})
+
         let data = [];
         for (let i = 0; i < 20; i++){
             data.push(Math.floor(Math.random() * 100)+1);
@@ -36,11 +43,13 @@ export default class App extends React.Component {
         this.setState({data: data});
 
         if (this.state.algorithms.length > 0){
+            this.setState({reset: true})
             this.state.algorithms.forEach(i=>{
                 i.steps = this.getSteps(i.algorithm, this.state.data)
             })
+            this.setState({reset: false})
         }
-        this.setState({sort: false})
+
     }
 
     startSort = (msg) =>{
@@ -74,18 +83,26 @@ export default class App extends React.Component {
     }
 */
 
+    clear = () => {
+        this.setState({algorithms: []})
+    }
     addAlgorithm = (algorithm) =>{
         let temp = this.state.algorithms;
-        temp.push({algorithm: algorithm, steps: this.getSteps(algorithm, [...this.state.data])})
-        this.setState({algorithms: temp});
+        temp.push({algorithm: algorithm, steps: this.getSteps(algorithm, [...this.state.data]), graphID: this.state.graphID+1})
+        this.setState({
+            algorithms: temp,
+            graphID: this.state.graphID+1
+
+        });
     }
 
 
-    removeAlgorithm = (algorithm) =>{
+    removeAlgorithm = (graphID) =>{
         console.log("remove algorithm")
         let temp = [];
-        for (let i = 0; i < this.state.algorithms; i++){
-            if (this.state.algorithms[i].algorithm != algorithm) {
+        for (let i = 0; i < this.state.algorithms.length; i++){
+            console.log("here poo graphID: " + graphID)
+            if (this.state.algorithms[i].graphID !== graphID) {
                 temp.push(this.state.algorithms[i]);
             }
         }
@@ -108,12 +125,28 @@ export default class App extends React.Component {
         this.state.sort = false;
     }
 
+    updateSpeed = (newSpeed) =>{
+        this.setState({speed: newSpeed});
+    }
+
+    changeDecoration = () =>{
+        if (this.state.decoration == "bars"){
+            this.setState({decoration: "numerics"})
+        }else if (this.state.decoration == "numerics"){
+            this.setState({decoration: "bars"})
+        }
+    }
+
+    drawGraphs = () =>{
+
+        {this.setState({reset: false})}
+    }
 
     render() {
 
         return(
             <div>
-                <Controlbar generateDataCallback = {this.generateData} startSortCallback = {this.startSort}/>
+                <Controlbar generateDataCallback = {this.generateData} startSortCallback = {this.startSort} clearCallback = {this.clear}/>
 
 
 
@@ -128,9 +161,14 @@ export default class App extends React.Component {
                 {(this.state.algorithms.map(i => (
                     <div>
                         <h2>{i.algorithm}</h2>
-                        <Graph steps = {[i][0].steps /*index 0 being the starting step (unsorted array) so then when animating should be: [i][0][j]*/} sort = {this.state.sort} stopSort = {this.stopSort} removeAlgorithm = {this.removeAlgorithm} title = {i.algorithm}/>
+                        <h3>{"reset: " + this.state.reset}</h3>
+                        <Graph steps = {[i][0].steps} sort = {this.state.sort} stopSort = {this.stopSort} removeAlgorithm = {this.removeAlgorithm} title = {i.algorithm} speed = {this.state.speed} decoration ={this.state.decoration} graphID = {i.graphID} reset={this.state.reset}/>
+                        {/*/*index 0 being the starting step (unsorted array) so then when animating should be: [i][0][j]*/}
                     </div>
                 )))}
+
+
+                <Bottombar updateSpeedCallback = {this.updateSpeed} toggleDecoration = {this.changeDecoration}/>
             </div>
         );
 

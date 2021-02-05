@@ -1,27 +1,34 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
 import './Graph.css'
+import Bar from "./Bar/Bar";
 
 
 function Graph(props) {
     let steps = props.steps;
-    let continueAnimation = true;
+    let complete = false;
     const [index, setIndex] = useState(0);
+    let speed = props.speed;
+
 
 
 
     useEffect(() => {
+        if (props.reset == true){
+            setIndex(0);
+
+        }
         if (props.sort == true){
             const interval = setInterval(() => {
-                if (continueAnimation) {
+                if (!(complete)) {
                     if (steps.length > index + 1) {
                         setIndex(index + 1)
                     } else {
                         props.stopSort()
-                        continueAnimation = false;
+                        complete = false;
                     }
                 }
-            }, 10);
+            }, speed);
             return () => clearInterval(interval); //deletes
         }
 
@@ -29,7 +36,8 @@ function Graph(props) {
 
     return (
         <div>
-            {drawBars(steps[index], props, props.title)}
+            {speed}
+            {drawBars(steps[index], props, props.title, props.decoration, complete)}
         </div>
     )
 }export default Graph
@@ -172,11 +180,7 @@ const animiate = (steps, displayData, setDisplayData)=>{
     }
 */
 
-
-
-
-
-
+/*
 function drawBars(data, props, algorithm){
 
     let handleRemove = (e) => {
@@ -196,6 +200,8 @@ function drawBars(data, props, algorithm){
                 height: `${getBarHeight(Math.max(data))}`}}>
                 {
                     data.map(i => (
+
+
                         <svg width="1" height={getBarHeight(i)} className={"arraybar"}>
                             <rect width="400" height={getBarHeight(i)} style={{
                                 height: `${getBarHeight(i)}em`, fill: `${getColour(key++)}`
@@ -208,7 +214,47 @@ function drawBars(data, props, algorithm){
     );
 }
 
+*/
 
+function drawBars(data, props, algorithm, decoration, complete){
+
+
+
+    let key = -1;
+
+
+    if (decoration == "bars"){
+        return(
+            <div id = {"sort"}>
+                <h1>{"sort: " + props.sort}</h1>
+                <button className={"close-button"} value={algorithm} onClick={()=>props.removeAlgorithm(props.graphID)}>x</button>
+                <div className={"bars"} style={{
+                    height: `${(Math.max(data))}`}}>{
+                    data.map(i => (
+                        <Bar value = {i} decoration = {decoration} key = {key} complete = {complete}/>
+                    ))}
+                </div>
+            </div>
+        );
+    }else if (decoration == "numerics"){
+        return(
+            <div id = {"sort"}>
+                <h1>{"sort: " + props.sort}</h1>
+                <button className={"close-button"} value={algorithm} onClick={()=>props.removeAlgorithm(props.graphID)}>x</button>
+                <div className={"numerics"} style={{
+                    height: `${(Math.max(data))}`}}>{
+                    data.map(i => (
+                        <Bar value = {i} decoration = {decoration} key = {key}/>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+}
+
+
+/*
 
 //Returns blue if the data at hand is a focus/
 function getColour(index, focus){
@@ -228,3 +274,5 @@ function getColour(index, focus){
 function getBarHeight(i) {
     return i;
 }
+
+ */

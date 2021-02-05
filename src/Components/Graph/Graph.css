@@ -53,6 +53,13 @@ p{
     bottom: 0;
 }
 
+.numerics{
+    color: red;
+    display: flex;
+    text-align: center;
+    bottom: 0;
+}
+
 
 .rectangle{
     width: 200px;

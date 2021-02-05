@@ -10,8 +10,8 @@ export default function Controlbar(props) {
         <div>
             <nav className="Toolbar">
                 <button value="generateData" onClick={props.generateDataCallback}>Generate New Data</button>
+                <button onClick={props.clearCallback}>Clear</button>
                 <button id={"start"} value="startSort" onClick={props.startSortCallback}>Sort</button>
-
             </nav>
 
 
