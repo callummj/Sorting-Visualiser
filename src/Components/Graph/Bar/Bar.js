@@ -1,15 +1,17 @@
 function Bar(props) {
+
     let key = props.key;
     let i = props.value;
     let decoration = props.decoration;
 
-    console.log("decoratiom: " + decoration)
+    //console.log("decoratiom: " + decoration)
 
+   // console.log("focus: " + props.focus)
     if (decoration == "bars"){
         return(
             <svg width="1" height={getBarHeight(i)} className={"arraybar"}>
                 <rect width="400" height={getBarHeight(i)} style={{
-                    height: `${getBarHeight(i)}em`, fill: `${getColour(key++, [], props.complete)}` //[] = the focus variable
+                    height: `${getBarHeight(i)}em`, fill: `${getColour(key, props.focus, props.complete)}` //[] = the focus variable
                 }} />
             </svg>)
     }else{
@@ -26,11 +28,18 @@ function Bar(props) {
 
 //Returns blue if the data at hand is a focus/
 function getColour(index, focus, complete){
-    console.log("get colour complete var: " + complete)
+    //console.log("get colour complete var: " + complete)
     if (complete){
-        console.log("complete")
+       // console.log("complete")
         return "green"
     }else{
+        if (focus.includes(index)){
+           // console.log("blue")
+            return "blue";
+        }else{
+           // console.log("not blue")
+        }
+        /*
         if(Array.isArray(focus)){
             for (let i =0; i < focus.length; i++){
                 console.log("focus: " + focus[i] + " " + index)
@@ -38,7 +47,7 @@ function getColour(index, focus, complete){
                     return "blue"
                 }
             }
-        }
+        }*/
         return "orange";
     }
 

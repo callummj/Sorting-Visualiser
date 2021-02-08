@@ -6,34 +6,102 @@ import Bar from "./Bar/Bar";
 
 function Graph(props) {
     let steps = props.steps;
-    let complete = false;
+    let [complete, setComplete] = useState(false);
+    let [sort, setSort] = useState(props.sort)
     const [index, setIndex] = useState(0);
     let speed = props.speed;
 
-
-
-
     useEffect(() => {
-        if (props.reset == true){
-            setIndex(0);
 
+
+
+        if ((props.reset == true) &&(index != 0)){
+            console.log("resetting")
+            setIndex(0);
+            setComplete(false)
+            props.resetCompletedCallback();
         }
-        if (props.sort == true){
+
+        /*
+        if (reset == true && index != 0){
+            alert("resetting index")
+            setIndex(0);
+            setReset = false;
+        }*/
+
+
+        //Sorting status for local array:
+        //If
+        if (props.sort){
+            if (!complete){
+                if (sort != true){
+                    setSort(true)
+                }
+            }else if (complete){
+                props.stopSort()
+                setSort(false)
+            }
+        }
+
+        console.log("algorithm: " + props.title + " index: " + index)
+        console.log("length of steps: " + steps.length + " with index 0: " + steps[0])
+
+        //if props.sorting
+            //if not complete
+                //if sort != true
+
+
+        /*
+
+        OLD
+
+        //If not complete and continue to sort
+        if (!complete && sort){
             const interval = setInterval(() => {
+                console.log("compolete: " + complete)
                 if (!(complete)) {
                     if (steps.length > index + 1) {
                         setIndex(index + 1)
                     } else {
+                        console.log("should stop sort")
                         props.stopSort()
-                        complete = false;
+                        setSort(false);
+                        setComplete(true);
+
                     }
                 }
+            }, speed);
+            return () => clearInterval(interval); //deletes*/
+
+
+
+
+
+
+            if (!complete && sort){
+            const interval = setInterval(() => {
+                return new Promise(resolve => {
+                        console.log("compolete: " + complete)
+                        if (!(complete)) {
+                            if (steps.length > index + 1) {
+                                setIndex(index + 1)
+                            } else {
+                                console.log("should stop sort")
+                                props.stopSort()
+                                setSort(false);
+                                setComplete(true);
+                            }
+                        }
+                    }
+                )
             }, speed);
             return () => clearInterval(interval); //deletes
         }
 
     });
 
+
+    console.log("reset: " + props.reset + " index: " + index)
     return (
         <div>
             {speed}
@@ -42,196 +110,36 @@ function Graph(props) {
     )
 }export default Graph
 
-let animate = (index, setIndex, steps, props) =>{
-    console.log("calling animate steps len: " + steps.length)
-    for (let i = 0; i < steps.length; i++){
-
-        setTimeout(function() {
-            setIndex(index ++);
-        }, 100*i);
-
-        //setIndex(index++);
-        console.log("index: " + index)
-        //setTimeout(()=>(setIndex(index +1)), 10*i);
-    }
-    props.stopSort(); //Stops sort from being invoked again
-}
 
 
-/*
+const drawBars = (data, props, algorithm, decoration, complete) => {
 
-/*
-const animiate = (steps, displayData, setDisplayData)=>{
+    let focus = [];
 
-    let sorted = false;
-    do{
-        for (let i = 0; i < steps.length; i++){
-            setDisplayData(steps[i])
-            /*
-            setTimeout(function() {
-                console.log("i: " + i)
-                setDisplayData(steps[i])
-            }, 1*i);
-        }
-        sorted = true;
-    }while (!sorted)
-
-}*/
-/*
-    console.log("oog boo " + props.sort)
-
-    if (props.sort == true){
-        for (let i = 0; i < steps.length; i++){
-
-            console.log("ooga booga")
-            setTimeout(()=>(setDisplayData(steps[i]), (10*i)))
-
-        }
-    }else{
-        setDisplayData(steps[0])
+    //Has a focus
+    if (data.length == 2){
+        focus = data[1];
+        data = [...data[0]]
+        // data = [...dta
     }
 
-    console.log()
-    return(
-        <div>
-            {drawBars(displayData, props)}
-        </div>
-    )
-*/
-    /*
-    useEffect(() => {
-        if (props.sort == true){
+    console.log("focus here: " + focus)
+    let key = 0;
 
 
-            const element = document.getElementById('bars');
-            let start;
-
-            function step(timestamp) {
-                if (start === undefined)
-                    start = timestamp;
-                const elapsed = timestamp - start;
-
-                // `Math.min()` is used here to make sure that the element stops at exactly 200px.
-                element.style.transform = 'translateX(' + Math.min(0.1 * elapsed, 200) + 'px)';
-
-                if (elapsed < 2000) { // Stop the animation after 2 seconds
-                    window.requestAnimationFrame(step);
-                }
-            }
-
-            for (let i = 0; i < steps.length-1; i++){
-                setTimeout(function() {
-                    setIndex(index+1)
-                }, 10*i);
-
-            }
-        }
-    });*/
-
-/*
-    return(
-        <div>
-            <h1>{"sort: " + props.sort}</h1>
-            <button className={"close-button"} onClick={()=>handleClick}>x</button>
-            <div className={"bars"} style={{
-                height: `${getBarHeight(Math.max(steps[index]))}`}}>
-                {
-                    steps[index].map(i => (
-                        <svg width="1" height={getBarHeight(i)} className={"arraybar"}>
-                            <rect width="400" height={getBarHeight(i)} style={{
-                                height: `${getBarHeight(i)}em`, fill: `${getColour(key++)}`
-                            }} />
-                        </svg>)
-
-                    )}
-            </div>
-        </div>)
-    /*
-    return(
-        <div>
-            {drawBars(displayData, props)}
-        </div>
-    );
-*/
-
-    /*
-    if (props.sort == false){
-        return(
-            <div>
-                <h1>{"sort: " + props.sort}</h1>
-                <button className={"close-button"} onClick={()=>handleClick}>x</button>
-                <div className={"bars"} style={{
-                    height: `${getBarHeight(Math.max(steps[index]))}`}}>
-                    {
-                        steps[index].map(i => (
-                            <svg width="1" height={getBarHeight(i)} className={"arraybar"}>
-                                <rect width="400" height={getBarHeight(i)} style={{
-                                    height: `${getBarHeight(i)}em`, fill: `${getColour(key++)}`
-                                }} />
-                            </svg>)
-
-                        )}
-                </div>
-            </div>)
-    }else{
-
-        return (animate(props, steps, setSteps, index, setIndex) )
-
-    }
-*/
-
-/*
-function drawBars(data, props, algorithm){
-
-    let handleRemove = (e) => {
-        console.log("remov thing")
-        props.removeAlgorithm(e.target.value);
-    }
+    console.log("data: " + data + " for " + props.title);
 
 
-    let key = -1;
-
-    console.log("reutrn + " + data)
-    return(
-        <div id = {"sort"}>
-            <h1>{"sort: " + props.sort}</h1>
-            <button className={"close-button"} value={algorithm} onClick={()=>props.removeAlgorithm(props.title)}>x</button>
-            <div className={"bars"} style={{
-                height: `${getBarHeight(Math.max(data))}`}}>
-                {
-                    data.map(i => (
-
-
-                        <svg width="1" height={getBarHeight(i)} className={"arraybar"}>
-                            <rect width="400" height={getBarHeight(i)} style={{
-                                height: `${getBarHeight(i)}em`, fill: `${getColour(key++)}`
-                            }} />
-                        </svg>)
-
-                    )}
-            </div>
-        </div>
-    );
-}
-
-*/
-
-function drawBars(data, props, algorithm, decoration, complete){
-
-
-
-    let key = -1;
-
-
+    let height = data[0].max + " px";
     if (decoration == "bars"){
         return(
-            <div id = {"sort"}>
-                <h1>{"sort: " + props.sort}</h1>
+            <div className={"bars-wrapper"} style={{height: {height}}}>
+                <h1>{"Completed: " + complete}</h1>
                 <button className={"close-button"} value={algorithm} onClick={()=>props.removeAlgorithm(props.graphID)}>x</button>
                 <div className={"bars"} style={{
                     height: `${(Math.max(data))}`}}>{
                     data.map(i => (
-                        <Bar value = {i} decoration = {decoration} key = {key} complete = {complete}/>
+                        <Bar value = {i} decoration = {decoration} key = {key++} complete = {complete} focus = {focus}/>
                     ))}
                 </div>
             </div>
@@ -244,7 +152,7 @@ function drawBars(data, props, algorithm, decoration, complete){
                 <div className={"numerics"} style={{
                     height: `${(Math.max(data))}`}}>{
                     data.map(i => (
-                        <Bar value = {i} decoration = {decoration} key = {key}/>
+                        <Bar value = {i} decoration = {decoration} key = {key++} focus = {focus}/>
                     ))}
                 </div>
             </div>
@@ -252,27 +160,3 @@ function drawBars(data, props, algorithm, decoration, complete){
     }
 
 }
-
-
-/*
-
-//Returns blue if the data at hand is a focus/
-function getColour(index, focus){
-    if(Array.isArray(focus)){
-        for (let i =0; i < focus.length; i++){
-            console.log("focus: " + focus[i] + " " + index)
-            if (focus[i] === index){
-                return "blue"
-            }
-        }
-    }
-
-    return "orange";
-}
-
-//Calculates appropriate bar height depending on how many algorithms are being compared.
-function getBarHeight(i) {
-    return i;
-}
-
- */

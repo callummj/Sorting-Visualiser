@@ -4,6 +4,8 @@
     background-color: #ecf0f1;
     display: flex;
     justify-content: space-around;
+    overflow: hidden;
+
 }
 
 
@@ -93,12 +95,7 @@ https://www.w3schools.com/howto/howto_js_bottom_nav_responsive.asp
 }
 
 /* Add a green background color to the active link */
-#bottombar a.active {
-    background-color: #4CAF50;
-    color: white;
-}
-
-/* Hide the link that should open and close the navbar on small screens */
-#bottombar .icon {
-    display: none;
+button:active {
+    position:relative;
+    top:2px;
 }

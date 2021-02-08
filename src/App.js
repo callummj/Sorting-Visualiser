@@ -8,6 +8,13 @@ import Graph from "./Components/Graph/Graph";
 
 import Bubblesort from "./Algorithms/Bubblesort";
 import SelectionSort from "./Algorithms/Selectionsort";
+import Heapsort from "./Algorithms/Heapsort"
+import Insertionsort from "./Algorithms/Insertionsort";
+import MergeSortDriver from "./Algorithms/Mergesort";
+import Quicksort from "./Algorithms/Quicksort";
+import Radixsort from "./Algorithms/Radixsort";
+
+
 import Bottombar from "./Components/Toolbars/Bottombar";
 
 export default class App extends React.Component {
@@ -23,6 +30,8 @@ export default class App extends React.Component {
             decoration: "bars",
             graphID: 0, //Keeps track of latest graph ID which has been assigned
             reset : false,
+            stopCounter: 0, //Keeps track of when an algorithm has finished (used in stopSort())
+            resetCounter: 0,
         }
     }
 
@@ -35,6 +44,10 @@ export default class App extends React.Component {
     generateData = () =>{
         this.setState({sort: false})
 
+        if (this.state.algorithms.length > 0){
+            this.setState({reset: true})
+        }
+
         let data = [];
         for (let i = 0; i < 20; i++){
             data.push(Math.floor(Math.random() * 100)+1);
@@ -42,46 +55,51 @@ export default class App extends React.Component {
 
         this.setState({data: data});
 
-        if (this.state.algorithms.length > 0){
-            this.setState({reset: true})
-            this.state.algorithms.forEach(i=>{
-                i.steps = this.getSteps(i.algorithm, this.state.data)
-            })
-            this.setState({reset: false})
-        }
+        this.state.algorithms.forEach(i=>{
+            //i.steps = this.getSteps(i.algorithm, this.state.data)
+           // temp.push({algorithm: algorithm, steps: this.getSteps(algorithm, [...this.state.data]), graphID: this.state.graphID+1})
 
+            let steps = this.getSteps(i.algorithm, data);
+            console.log("NEW STEPS: " + steps + " with len: " + steps.length);
+            i.steps = steps;
+
+        })
+
+
+        /*
+        console.log("data: " + data)
+
+
+        if (this.state.algorithms.length > 0){
+            this.reset();
+        }
+*/
     }
 
-    startSort = (msg) =>{
+    resetCompleted = () =>{
+        let tempResetCounter = this.state.resetCounter + 1;
+        this.setState({resetCounter: tempResetCounter})
+        console.log("reset complete func: " + tempResetCounter)
+
+        if (this.state.resetCounter >= this.state.algorithms.length){
+            this.setState({reset: false})
+        }
+    }
+
+    startSort = () =>{
         this.setState({sort: true})
     }
 
+    stopSort = () =>{
 
-    /*
-    addAlgorithm = (algorithm) =>{
-        let temp = this.state.algorithms;
-        let alreadyContains = false;
-        let containedSteps = [];
+        console.log("stopping sort")
 
-        for (let i = 0; i < temp.length; i++){
-            if (temp[i].algorithm === algorithm){
-                if (temp[i].dataVer === this.state.dataVer) {
-                    alreadyContains = true;
-                    containedSteps = temp[i].steps;
-                }
-            }
-        }
+        let temp = this.state.stopCounter + 1;
+        console.log("lenght: " + this.state.algorithms.length)
+        this.setState({sort: false})
 
-        if (!alreadyContains) {
-            temp.push({algorithm: algorithm, dataVer: this.state.dataVer, steps: this.getSteps(algorithm, [...this.state.data])}) //[  [  [alg1 title], [alg1, step1], [alg1,step2]   ,   [alg2 title], [alg2, step1], [alg2,step2]  ] ....
-            this.setState({algorithms: temp});
-        } else {
-            temp.push({algorithm: algorithm, dataVer: this.state.dataVer, steps: containedSteps}) //[  [  [alg1 title], [alg1, step1], [alg1,step2]   ,   [alg2 title], [alg2, step1], [alg2,step2]  ] ....
-            this.setState({algorithms: temp});
-            //alert("You have already selected this algorithm")
-        }
     }
-*/
+
 
     clear = () => {
         this.setState({algorithms: []})
@@ -101,7 +119,7 @@ export default class App extends React.Component {
         console.log("remove algorithm")
         let temp = [];
         for (let i = 0; i < this.state.algorithms.length; i++){
-            console.log("here poo graphID: " + graphID)
+            console.log("here graphID: " + graphID)
             if (this.state.algorithms[i].graphID !== graphID) {
                 temp.push(this.state.algorithms[i]);
             }
@@ -112,18 +130,26 @@ export default class App extends React.Component {
 
 
     getSteps = (algorithm, data) =>{
-        console.log("alg: " + algorithm)
+        console.log("getsteps data: " + data);
         switch (algorithm) {
             case "Bubble Sort":
                 return Bubblesort(data);
+            case "Heap Sort":
+                return Heapsort(data);
+            case "Insertion Sort":
+                return Insertionsort(data);
+            case "Quick Sort":
+                return Quicksort(data);
+            case "Radix Sort":
+                return Radixsort(data);
+            case "Merge Sort":
+                return MergeSortDriver(data);
             case "Selection Sort":
                 return SelectionSort(data);
         }
     }
 
-    stopSort = () =>{
-        this.state.sort = false;
-    }
+
 
     updateSpeed = (newSpeed) =>{
         this.setState({speed: newSpeed});
@@ -142,13 +168,12 @@ export default class App extends React.Component {
         {this.setState({reset: false})}
     }
 
+
     render() {
 
         return(
             <div>
                 <Controlbar generateDataCallback = {this.generateData} startSortCallback = {this.startSort} clearCallback = {this.clear}/>
-
-
 
 
                 <Algorithmbar onAddAlgorithm={this.addAlgorithm}/>
@@ -157,15 +182,21 @@ export default class App extends React.Component {
 
 
                 {/*<h2>Graph:</h2>*/}
+                <h3>{"reset state of app: " + this.state.reset}</h3>
 
-                {(this.state.algorithms.map(i => (
-                    <div>
-                        <h2>{i.algorithm}</h2>
-                        <h3>{"reset: " + this.state.reset}</h3>
-                        <Graph steps = {[i][0].steps} sort = {this.state.sort} stopSort = {this.stopSort} removeAlgorithm = {this.removeAlgorithm} title = {i.algorithm} speed = {this.state.speed} decoration ={this.state.decoration} graphID = {i.graphID} reset={this.state.reset}/>
-                        {/*/*index 0 being the starting step (unsorted array) so then when animating should be: [i][0][j]*/}
-                    </div>
-                )))}
+
+                <div id={"sorting-area"}>
+                    {(this.state.algorithms.map(i => (
+
+                        <div id ={i.graphID}>
+                            <h1>{"sort state: " + this.state.sort}</h1>
+                            <h2>{i.algorithm}</h2>
+                            <Graph steps = {[i][0].steps} sort = {this.state.sort} stopSort = {this.stopSort} removeAlgorithm = {this.removeAlgorithm} title = {i.algorithm} speed = {this.state.speed} decoration ={this.state.decoration} graphID = {i.graphID} reset={this.state.reset} resetCompletedCallback = {this.resetCompleted}/>
+                            {/*/*index 0 being the starting step (unsorted array) so then when animating should be: [i][0][j]*/}
+                        </div>
+                    )))}
+                </div>
+
 
 
                 <Bottombar updateSpeedCallback = {this.updateSpeed} toggleDecoration = {this.changeDecoration}/>

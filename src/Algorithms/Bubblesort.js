@@ -3,6 +3,7 @@ import React from 'react';
 
 function Bubblesort(data) {
     let steps = [];
+    console.log("data in bubble: " + data)
     steps.push([...data]);
     let swapped;
     do {
@@ -15,7 +16,7 @@ function Bubblesort(data) {
                 swapped = true;
 
 
-                //steps.push([...data]);
+                steps.push([...data]);
 
 
                 //steps.push([...data])

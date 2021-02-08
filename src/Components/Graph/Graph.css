@@ -45,6 +45,10 @@ p{
     display: inline-block;
 }
 
+.bars-wrapper{
+
+}
+
 .bars{
     overflow: hidden;
     position: relative;
