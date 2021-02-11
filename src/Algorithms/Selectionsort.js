@@ -1,4 +1,5 @@
-function SelectionSort(data){
+function SelectionSort(originalData){
+    let data = [...originalData];
     let steps = [];
     steps.push([...data]);
     let length = data.length;

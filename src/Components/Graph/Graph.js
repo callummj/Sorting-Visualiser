@@ -22,6 +22,10 @@ function Graph(props) {
             props.resetCompletedCallback();
         }
 
+        if (props.pause == true){
+            setSort(false);
+        }
+
         /*
         if (reset == true && index != 0){
             alert("resetting index")
@@ -82,6 +86,7 @@ function Graph(props) {
             const interval = setInterval(() => {
                 return new Promise(resolve => {
                         console.log("compolete: " + complete)
+
                         if (!(complete)) {
                             if (steps.length > index + 1) {
                                 setIndex(index + 1)
@@ -101,7 +106,16 @@ function Graph(props) {
     });
 
 
-    console.log("reset: " + props.reset + " index: " + index)
+    //TODO find out why, after an algorithm has been searched, then generated data again, cannot reanimate. Data does not get to here, and is 'undefined' in console.
+    console.log("reset: " + props.reset + " index: " + index + " vs steps: " + steps.length)
+
+
+
+    //TEMP FIX:
+
+    if (index > steps.length){
+        //alert("index larger than steps.length")
+    }
     return (
         <div>
             {speed}
@@ -116,31 +130,51 @@ const drawBars = (data, props, algorithm, decoration, complete) => {
 
     let focus = [];
 
+    console.log("data here: " + data  + " for alg: " + algorithm)
     //Has a focus
     if (data.length == 2){
+        console.log("data for focus: " + data)
         focus = data[1];
         data = [...data[0]]
         // data = [...dta
     }
 
     console.log("focus here: " + focus)
-    let key = 0;
+
 
 
     console.log("data: " + data + " for " + props.title);
 
 
     let height = data[0].max + " px";
+
+
+    let key = 0;
+    const gg = data.map((value) =>
+        // Correct! Key should be specified inside the array.
+        <>
+
+        <Bar key={key++} value = {value} decoration = {decoration} complete = {complete} focus = {focus}/>
+        </>
+    );
+
+    const bars = data.map((value, index) =>
+        // Only do this if items have no stable IDs
+        <>
+            {console.log("index in map: " + index + " value in map: " + value)}
+            <Bar index={index} value = {value} decoration = {decoration} complete = {complete} focus = {focus}/>
+        </>
+
+    );
+
     if (decoration == "bars"){
         return(
             <div className={"bars-wrapper"} style={{height: {height}}}>
                 <h1>{"Completed: " + complete}</h1>
                 <button className={"close-button"} value={algorithm} onClick={()=>props.removeAlgorithm(props.graphID)}>x</button>
                 <div className={"bars"} style={{
-                    height: `${(Math.max(data))}`}}>{
-                    data.map(i => (
-                        <Bar value = {i} decoration = {decoration} key = {key++} complete = {complete} focus = {focus}/>
-                    ))}
+                    height: `${(Math.max(data))}`}}>
+                    {bars}
                 </div>
             </div>
         );

@@ -1,17 +1,19 @@
 function Bar(props) {
 
-    let key = props.key;
+    let index = props.index;
     let i = props.value;
     let decoration = props.decoration;
 
     //console.log("decoratiom: " + decoration)
 
    // console.log("focus: " + props.focus)
+
+    console.log("KEY IN BAR: " + props.index)
     if (decoration == "bars"){
         return(
             <svg width="1" height={getBarHeight(i)} className={"arraybar"}>
                 <rect width="400" height={getBarHeight(i)} style={{
-                    height: `${getBarHeight(i)}em`, fill: `${getColour(key, props.focus, props.complete)}` //[] = the focus variable
+                    height: `${getBarHeight(i)}em`, fill: `${getColour(index, props.focus, props.complete)}` //[] = the focus variable
                 }} />
             </svg>)
     }else{
@@ -33,8 +35,9 @@ function getColour(index, focus, complete){
        // console.log("complete")
         return "green"
     }else{
+        console.log("focus: " + focus + " index: " + index + " focus includes: " + focus.includes(index))
         if (focus.includes(index)){
-           // console.log("blue")
+            console.log("blue")
             return "blue";
         }else{
            // console.log("not blue")

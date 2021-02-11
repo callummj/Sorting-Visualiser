@@ -32,6 +32,7 @@ export default class App extends React.Component {
             reset : false,
             stopCounter: 0, //Keeps track of when an algorithm has finished (used in stopSort())
             resetCounter: 0,
+            pause: false,
         }
     }
 
@@ -59,10 +60,10 @@ export default class App extends React.Component {
             //i.steps = this.getSteps(i.algorithm, this.state.data)
            // temp.push({algorithm: algorithm, steps: this.getSteps(algorithm, [...this.state.data]), graphID: this.state.graphID+1})
 
-            let steps = this.getSteps(i.algorithm, data);
+            let [...steps] = this.getSteps(i.algorithm, data);
             console.log("NEW STEPS: " + steps + " with len: " + steps.length);
             i.steps = steps;
-
+            //TODO for temp fix, change above line to: i.steps = this.getSteps(i.algorithm, data) but does not work properly
         })
 
 
@@ -137,7 +138,9 @@ export default class App extends React.Component {
             case "Heap Sort":
                 return Heapsort(data);
             case "Insertion Sort":
-                return Insertionsort(data);
+                console.log("steps to return: " + Insertionsort(data))
+                let steps = Insertionsort(data)
+                return steps;
             case "Quick Sort":
                 return Quicksort(data);
             case "Radix Sort":
@@ -168,6 +171,20 @@ export default class App extends React.Component {
         {this.setState({reset: false})}
     }
 
+    skip = (direction) =>{
+
+    }
+
+    togglePlayPause = () =>{
+        if (this.state.pause == true){
+            this.setState({pause: false})
+        }else{
+            if (this.state.sort == false){
+                this.setState({sort: true})
+            }
+            this.setState({pause: true})
+        }
+    }
 
     render() {
 
@@ -183,15 +200,14 @@ export default class App extends React.Component {
 
                 {/*<h2>Graph:</h2>*/}
                 <h3>{"reset state of app: " + this.state.reset}</h3>
-
-
+                <h3>{"sort state of app scope: " + this.state.sort}</h3>
                 <div id={"sorting-area"}>
                     {(this.state.algorithms.map(i => (
 
                         <div id ={i.graphID}>
                             <h1>{"sort state: " + this.state.sort}</h1>
                             <h2>{i.algorithm}</h2>
-                            <Graph steps = {[i][0].steps} sort = {this.state.sort} stopSort = {this.stopSort} removeAlgorithm = {this.removeAlgorithm} title = {i.algorithm} speed = {this.state.speed} decoration ={this.state.decoration} graphID = {i.graphID} reset={this.state.reset} resetCompletedCallback = {this.resetCompleted}/>
+                            <Graph steps = {[i][0].steps} sort = {this.state.sort} stopSort = {this.stopSort} removeAlgorithm = {this.removeAlgorithm} title = {i.algorithm} speed = {this.state.speed} decoration ={this.state.decoration} graphID = {i.graphID} reset={this.state.reset} resetCompletedCallback = {this.resetCompleted} pause = {this.state.pause}/>
                             {/*/*index 0 being the starting step (unsorted array) so then when animating should be: [i][0][j]*/}
                         </div>
                     )))}
@@ -199,7 +215,7 @@ export default class App extends React.Component {
 
 
 
-                <Bottombar updateSpeedCallback = {this.updateSpeed} toggleDecoration = {this.changeDecoration}/>
+                <Bottombar updateSpeedCallback = {this.updateSpeed} toggleDecoration = {this.changeDecoration} playPauseCallback = {this.togglePlayPause} skip = {() => this.skip()}/>
             </div>
         );
 
