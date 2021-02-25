@@ -1,24 +1,26 @@
-import React from 'react';
-
-
+//Returns the steps of bubble sort
 function Bubblesort(originalData) {
     let data = [...originalData];
     let steps = [];
-    let focus = [];
-    console.log("data in bubble: " + data)
-    steps.push([...data]);
+    steps.push([[...data], []]);
+    let change = [];
     let swapped;
     do {
+        change = [];
         swapped = false;
         for (let i = 0; i < data.length; i++) {
-            let focus = [i, i+1];
+            change = [data[i], data[i+1]]
+
+
             if (data[i] > data[i + 1]) {
+                change = [i, i+1]
                 let temp = data[i];
                 data[i] = data[i + 1];
                 data[i + 1] = temp;
                 swapped = true;
 
 
+                //steps.push([...data]);
 
 
                 //steps.push([...data])
@@ -26,16 +28,16 @@ function Bubblesort(originalData) {
             }
             steps.push([
                 [...data],
-                [...focus]
+                [...change]
             ]);
         }
     } while (swapped);
 
-    focus = [];
+    change = [];
     steps.push([
         [...data],
-        [...focus]
+        [...change]
     ]);
-    console.log("BUBBLE STEPS: " + steps[0])
     return steps;
-}export default Bubblesort
+}export default Bubblesort;
+

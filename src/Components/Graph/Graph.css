@@ -38,13 +38,6 @@ p{
 
 
 
-/* CSS for each array bar*/
-.arraybar {
-    margin: 1px;
-    width: 2vw;
-    display: inline-block;
-}
-
 .bars-wrapper{
 
 }
@@ -56,14 +49,6 @@ p{
     text-align: center;
     bottom: 0;
 }
-
-.numerics{
-    color: red;
-    display: flex;
-    text-align: center;
-    bottom: 0;
-}
-
 
 .rectangle{
     width: 200px;

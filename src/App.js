@@ -17,6 +17,7 @@ import Radixsort from "./Algorithms/Radixsort";
 
 import Bottombar from "./Components/Toolbars/Bottombar";
 
+
 export default class App extends React.Component {
 
 
@@ -54,6 +55,7 @@ export default class App extends React.Component {
             data.push(Math.floor(Math.random() * 100)+1);
         }
 
+
         this.setState({data: data});
 
         this.state.algorithms.forEach(i=>{
@@ -65,16 +67,6 @@ export default class App extends React.Component {
             i.steps = steps;
             //TODO for temp fix, change above line to: i.steps = this.getSteps(i.algorithm, data) but does not work properly
         })
-
-
-        /*
-        console.log("data: " + data)
-
-
-        if (this.state.algorithms.length > 0){
-            this.reset();
-        }
-*/
     }
 
     resetCompleted = () =>{
@@ -116,20 +108,33 @@ export default class App extends React.Component {
     }
 
 
+    //Removes the X algorithm from the viusaliser, using their ID
+    //TODO: investigate if I add 3 algorithms ids: 1, 2, 3. If I remove algorithm 2, and then re add a new algorithm, does this get assigned id 3 or is it messed up
     removeAlgorithm = (graphID) =>{
-        console.log("remove algorithm")
+        console.log("removing: "  + graphID)
+        const newAlgorithms = this.state.algorithms.filter(i =>
+            i.graphID !== graphID,
+        );
+
+
+
+        newAlgorithms.map(i=>{
+            console.log(i.ID);
+        })
+        this.setState({algorithms: newAlgorithms})
+        /*
         let temp = [];
         for (let i = 0; i < this.state.algorithms.length; i++){
-            console.log("here graphID: " + graphID)
             if (this.state.algorithms[i].graphID !== graphID) {
                 temp.push(this.state.algorithms[i]);
             }
         }
-        this.setState({algorithms: temp});
+        this.setState({algorithms: temp});*/
     }
 
 
 
+    //Gets and returns precomputed steps for each algorithm
     getSteps = (algorithm, data) =>{
         console.log("getsteps data: " + data);
         switch (algorithm) {
@@ -166,14 +171,6 @@ export default class App extends React.Component {
         }
     }
 
-    drawGraphs = () =>{
-
-        {this.setState({reset: false})}
-    }
-
-    skip = (direction) =>{
-
-    }
 
     togglePlayPause = () =>{
         if (this.state.pause == true){
@@ -188,6 +185,7 @@ export default class App extends React.Component {
 
     render() {
 
+
         return(
             <div>
                 <Controlbar generateDataCallback = {this.generateData} startSortCallback = {this.startSort} clearCallback = {this.clear}/>
@@ -201,13 +199,17 @@ export default class App extends React.Component {
                 {/*<h2>Graph:</h2>*/}
                 <h3>{"reset state of app: " + this.state.reset}</h3>
                 <h3>{"sort state of app scope: " + this.state.sort}</h3>
+                <h4>Test</h4>
                 <div id={"sorting-area"}>
+
+
+
                     {(this.state.algorithms.map(i => (
 
-                        <div id ={i.graphID}>
+                        <div >
                             <h1>{"sort state: " + this.state.sort}</h1>
                             <h2>{i.algorithm}</h2>
-                            <Graph steps = {[i][0].steps} sort = {this.state.sort} stopSort = {this.stopSort} removeAlgorithm = {this.removeAlgorithm} title = {i.algorithm} speed = {this.state.speed} decoration ={this.state.decoration} graphID = {i.graphID} reset={this.state.reset} resetCompletedCallback = {this.resetCompleted} pause = {this.state.pause}/>
+                            <Graph key={Date.now()} startData = {this.state.data} steps = {[i][0].steps} sort = {this.state.sort} stopSort = {this.stopSort} removeAlgorithm = {this.removeAlgorithm} title = {i.algorithm} speed = {this.state.speed} decoration ={this.state.decoration} graphID = {i.graphID} reset={this.state.reset} resetCompletedCallback = {this.resetCompleted} pause = {this.state.pause}/>
                             {/*/*index 0 being the starting step (unsorted array) so then when animating should be: [i][0][j]*/}
                         </div>
                     )))}

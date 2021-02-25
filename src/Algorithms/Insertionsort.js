@@ -5,9 +5,9 @@ import React from "react";
 
 function Insertionsort(originalData){
 
-
-    //Creates own copy of data, rather than maniuplating the original data
     let data = [...originalData];
+
+
     let steps = stepsGenerator(data);
 
     return steps;
@@ -20,6 +20,7 @@ function Insertionsort(originalData){
 //j = second iterator where to insert
 function stepsGenerator(data){
     let steps = [];
+    steps.push([[...data], []]);
     for (let i = 1; i < data.length; i++) {
         let change = [];
         let current = data[i]; //split between sorted/unsorted list
@@ -33,7 +34,7 @@ function stepsGenerator(data){
 
         data = temp;
         change = [j+1];
-            steps.push([
+        steps.push([
             [...data],
             [...change]
         ]);
@@ -45,20 +46,5 @@ function stepsGenerator(data){
     ]);
     return steps;
 }
-
-
-/*
-function Insertionsort(data){
-    let steps = [];
-    let original = data;
-    for (let i = 0; i < data.length; i++){
-        let temp = data[i];
-        for (let j = (i -1; j >= 0 && (data[j]) > temp; j--)){
-            data[j+1] = data[j];
-        }
-    }
-    data [j+1]
-
-}*/
 
 //https://www.geeksforgeeks.org/binary-insertion-sort/

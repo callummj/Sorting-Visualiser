@@ -1,5 +1,7 @@
 import React from "react";
 
+//INITIAL: https://www.w3resource.com/javascript-exercises/searching-and-sorting-algorithm/searching-and-sorting-algorithm-exercise-3.php
+
 let arrayLength = 0;
 let steps;
 

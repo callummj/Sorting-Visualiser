@@ -1,3 +1,4 @@
+import './Bar.css'
 function Bar(props) {
 
     let index = props.index;
@@ -8,7 +9,7 @@ function Bar(props) {
 
    // console.log("focus: " + props.focus)
 
-    console.log("KEY IN BAR: " + props.index)
+
     if (decoration == "bars"){
         return(
             <svg width="1" height={getBarHeight(i)} className={"arraybar"}>
@@ -18,8 +19,8 @@ function Bar(props) {
             </svg>)
     }else{
         return (
-            <div >
-                <h1>{" " + i + ", "}</h1>
+            <div className={"Numeric-Bar"}>
+                <h3 style={{color: `${getColour(index, props.focus, props.complete)}`}}>{" " + i + ", "}</h3>
             </div>
         )
     }
@@ -35,9 +36,7 @@ function getColour(index, focus, complete){
        // console.log("complete")
         return "green"
     }else{
-        console.log("focus: " + focus + " index: " + index + " focus includes: " + focus.includes(index))
         if (focus.includes(index)){
-            console.log("blue")
             return "blue";
         }else{
            // console.log("not blue")
