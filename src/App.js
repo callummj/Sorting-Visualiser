@@ -17,6 +17,9 @@ import Radixsort from "./Algorithms/Radixsort";
 
 import Bottombar from "./Components/Toolbars/Bottombar";
 
+//www.npmjs.com/package/nanoid
+import { nanoid } from 'nanoid'
+import ResultsTable from "./Components/Results/ResultsTable";
 
 export default class App extends React.Component {
 
@@ -31,9 +34,11 @@ export default class App extends React.Component {
             decoration: "bars",
             graphID: 0, //Keeps track of latest graph ID which has been assigned
             reset : false,
-            stopCounter: 0, //Keeps track of when an algorithm has finished (used in stopSort())
+            finishingOrder: [], //Keeps track of when an algorithm has finished (used in stopSort())
+            finishingCounter: 0,
             resetCounter: 0,
             pause: false,
+            testCount: 0,
         }
     }
 
@@ -51,7 +56,7 @@ export default class App extends React.Component {
         }
 
         let data = [];
-        for (let i = 0; i < 20; i++){
+        for (let i = 0; i < 100; i++){
             data.push(Math.floor(Math.random() * 100)+1);
         }
 
@@ -83,13 +88,54 @@ export default class App extends React.Component {
         this.setState({sort: true})
     }
 
-    stopSort = () =>{
+    stopSort = (algorithm, swaps) =>{
 
-        console.log("stopping sort")
 
+        //TO GET THIS TO WORK: CHANGE STATE STOPCOUNTER TO finishingOrder
+
+        this.setState({finishingCounter: this.state.finishingCounter + 1})
+
+        console.log("stop sort: " +this.state.finishingCounter + "/" + this.state.algorithms.length)
+        if (this.state.finishingCounter == this.state.algorithms.length){
+            this.setState({sort: false})
+        }
+        /*
+        if (this.state.finishingOrder.length == this.state.algorithms.length){
+            this.setState({sort: false});
+        }*
+        /*
+
+        let result = {name:algorithm, swaps:swaps};
+        let result2 = this.state.finishingOrder;
+        result2.push(result); //conactonating order
+
+        this.setState({test: algorithm})
+
+
+
+        //TODO THIS IS CAUSING CONSTANT SORTING
+        this.setState({
+            //finishingOrder: result2,
+        })
+
+
+        console.log("finishing order: " + this.state.finishingOrder)
+        //Check if all algorithms have finished
+        if (this.state.finishingOrder.length == this.state.algorithms.length){
+           this.setState({sort: false});
+        }*/
+        /*
         let temp = this.state.stopCounter + 1;
         console.log("lenght: " + this.state.algorithms.length)
         this.setState({sort: false})
+
+
+        /*
+        console.log("stop sorting")
+
+        let temp = this.state.stopCounter + 1;
+        console.log("lenght: " + this.state.algorithms.length)
+        this.setState({sort: false})*/
 
     }
 
@@ -99,37 +145,24 @@ export default class App extends React.Component {
     }
     addAlgorithm = (algorithm) =>{
         let temp = this.state.algorithms;
-        temp.push({algorithm: algorithm, steps: this.getSteps(algorithm, [...this.state.data]), graphID: this.state.graphID+1})
-        this.setState({
-            algorithms: temp,
-            graphID: this.state.graphID+1
+        temp.push({algorithm: algorithm, steps: this.getSteps(algorithm, [...this.state.data]), graphID: this.state.graphID, key: this.generateKey()})
 
-        });
+        this.setState(prevstate => ({
+                algorithms: temp,
+                graphID: prevstate.graphID + 1,}
+            ));
     }
 
 
     //Removes the X algorithm from the viusaliser, using their ID
-    //TODO: investigate if I add 3 algorithms ids: 1, 2, 3. If I remove algorithm 2, and then re add a new algorithm, does this get assigned id 3 or is it messed up
     removeAlgorithm = (graphID) =>{
         console.log("removing: "  + graphID)
         const newAlgorithms = this.state.algorithms.filter(i =>
             i.graphID !== graphID,
         );
 
-
-
-        newAlgorithms.map(i=>{
-            console.log(i.ID);
-        })
         this.setState({algorithms: newAlgorithms})
-        /*
-        let temp = [];
-        for (let i = 0; i < this.state.algorithms.length; i++){
-            if (this.state.algorithms[i].graphID !== graphID) {
-                temp.push(this.state.algorithms[i]);
-            }
-        }
-        this.setState({algorithms: temp});*/
+
     }
 
 
@@ -183,6 +216,20 @@ export default class App extends React.Component {
         }
     }
 
+    generateKey = () =>{
+        const [id] = nanoid();
+        return id;
+    }
+
+
+    getResultsTable = () =>{
+        if (this.state.finishingOrder.length > 0 ){
+            console.log("RESULTS TABLE")
+            return <h1>Finished</h1>
+            return <ResultsTable results = {this.state.finishingOrder}/>
+        }
+    }
+
     render() {
 
 
@@ -193,28 +240,38 @@ export default class App extends React.Component {
 
                 <Algorithmbar onAddAlgorithm={this.addAlgorithm}/>
 
-                {/*<h1>Data: {this.state.data}</h1>*/}
-
-
-                {/*<h2>Graph:</h2>*/}
-                <h3>{"reset state of app: " + this.state.reset}</h3>
-                <h3>{"sort state of app scope: " + this.state.sort}</h3>
-                <h4>Test</h4>
+                <h3>{"Reset: " + this.state.reset}</h3>
                 <div id={"sorting-area"}>
-
 
 
                     {(this.state.algorithms.map(i => (
 
                         <div >
-                            <h1>{"sort state: " + this.state.sort}</h1>
                             <h2>{i.algorithm}</h2>
-                            <Graph key={Date.now()} startData = {this.state.data} steps = {[i][0].steps} sort = {this.state.sort} stopSort = {this.stopSort} removeAlgorithm = {this.removeAlgorithm} title = {i.algorithm} speed = {this.state.speed} decoration ={this.state.decoration} graphID = {i.graphID} reset={this.state.reset} resetCompletedCallback = {this.resetCompleted} pause = {this.state.pause}/>
+
+
+                            <Graph
+                                key={i.key}
+                               startData = {this.state.data}
+                               steps = {[i][0].steps}
+                               sort = {this.state.sort}
+                               stopSort = {this.stopSort} removeAlgorithm = {this.removeAlgorithm}
+                               title = {i.algorithm} speed = {this.state.speed} decoration ={this.state.decoration}
+                                graphID = {i.graphID}
+                                reset={this.state.reset}
+                                resetCompletedCallback = {this.resetCompleted}
+                                pause = {this.state.pause}
+                            />
                             {/*/*index 0 being the starting step (unsorted array) so then when animating should be: [i][0][j]*/}
                         </div>
                     )))}
                 </div>
 
+
+
+                <h1>test: {this.state.test}</h1>
+
+                {this.getResultsTable}
 
 
                 <Bottombar updateSpeedCallback = {this.updateSpeed} toggleDecoration = {this.changeDecoration} playPauseCallback = {this.togglePlayPause} skip = {() => this.skip()}/>

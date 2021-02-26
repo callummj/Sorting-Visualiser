@@ -1,9 +1,9 @@
 function SelectionSort(originalData){
     let data = [...originalData];
     let steps = [];
-    steps.push([...data]);
+    let focus = [];
+    steps.push([[...data], []]);
     let length = data.length;
-
     for(let i = 0; i < length; i++) {
 
         let smallestInt = i;
@@ -17,12 +17,13 @@ function SelectionSort(originalData){
             let temp = data[i];
             data[i] = data[smallestInt];
             data[smallestInt] = temp;
-
-        }steps.push(
-            [...data]);
+            focus = [i, smallestInt]
+        }steps.push([
+            [...data],
+            [...focus]]);
     }
-    steps.push(
-        [...data]
-    );
+    steps.push([
+        [...data],
+        [...focus]]);
     return steps;
 }export default SelectionSort;

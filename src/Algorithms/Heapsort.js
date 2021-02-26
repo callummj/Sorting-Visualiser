@@ -38,7 +38,10 @@ function heapSort (originalInput) {
     let input = [...originalInput];
     steps = [];
     arrayLength = input.length
-
+    steps.push([
+        [...input],
+        [[]]
+    ]);
 
     for (let i = Math.floor(arrayLength / 2); i >= 0; i -= 1) {
         heapRoot(input, i)

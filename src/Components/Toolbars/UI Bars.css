@@ -5,7 +5,6 @@
     display: flex;
     justify-content: space-around;
     overflow: hidden;
-
 }
 
 
@@ -57,12 +56,12 @@
     position: fixed;
     bottom: 0;
     width: 100%;
-
     text-align: center;
     text-decoration: none;
     padding-top: 5px;
     display: flex;
     justify-content: space-around;
+
 }
 
 

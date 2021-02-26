@@ -15,12 +15,8 @@ export default function Graph(props){
     let speed = props.speed;
 
 
-    //Start the sort
-    if ( (sort == false) && (props.sort == true) ){
-        setSort(true);
-    }else if ( (sort == true) && (props.sort == false) ){
-        setSort(false);
-    }
+
+
 
 
     // Use useRef for mutable variables that we want to persist
@@ -33,55 +29,113 @@ export default function Graph(props){
     let step = steps[index]; //0=index
 
 
+/*
+    //Potentially useEffect to handle stopping sort.
+    useEffect((()=>{
+        //Start the sort
+        if ( (sort == false) && (props.sort == true) ){
+            setSort(true);
+        }else if ( (sort == true) && (props.sort == false) ){
+            setSort(false);
+        }
+
+    }))
+
+
+
+    //Potentially useEffect to handle stopping sort.
+    useEffect((()=>{
+        //props.stopSort(props.title, steps.length);
+        console.log("index check " + index+  " / " + steps.length)
+        if (index == steps.length-1){
+            console.log("setting complete")
+            setComplete(true);
+            setSort(false);
+        }
+    }), [index])
+
+*/
+
+
+
+    /*
+
+
+    U S E   E  F  F  E  C  T    E X P L A I N E D:
+    I have two useEffects, one which handles whether the sta
+
+
+     */
+
+
+
+    if ( (sort == false) && (props.sort == true) && (!complete)){
+        setSort(true);
+    }else if ( (sort == true) && (props.sort == false) ){
+        setSort(false);
+    }
+
+
+
+    useEffect(()=>{
+        if (complete){
+            props.stopSort();
+        }
+    }, [complete])
+
     useEffect(() => {
+
+        console.log("variables: " +"\nReset:" + props.reset+"\nSort: " + sort + "\nIndex: " + index)
 
         if (props.reset == true){
             setComplete(false);
             props.resetCompletedCallback();
+            console.log("SETTING INDEX TO 0")
             setIndex(0);
         }
 
         const animate = time => {
-            if (previousTimeRef.current != undefined) {
+            if ((sort == true) && (complete == false)){
                 setIndex(prevIndex => (prevIndex + 1));
-
             }
+
+
             previousTimeRef.current = time;
-            requestRef.current = requestAnimationFrame(animate);
+            if (!complete){
+                console.log("index in animate: " + index)
+                requestRef.current = requestAnimationFrame(animate);
+            }
+
         }
 
         if (sort == true && !complete){
+            console.log("i stopped there")
             requestRef.current = requestAnimationFrame(animate);
+            console.log("steps before complete" +  " " + index  + " " + steps.length)
+
             if (index == steps.length-1){
+                console.log("complete")
                 setComplete(true);
                 setSort(false);
-                //props.stopSort()
             }
             return () => cancelAnimationFrame(requestRef.current);
         }
 
     }, );
 
-
-
-
-
     let dataToPass = getDataToPass(props, setSort, setComplete, steps, index);
-
-
-
 
     console.log("data to pass: " + dataToPass + " index at: " + index + " steps length: " + steps.length + " for algorithm: " + props.title)
     return (
         <>
-            {"local sort: " + sort}
-            {speed}
-            {"index: " + index}
-            {"id: " + props.graphID}
             {drawBars(dataToPass, props, props.title, props.decoration, complete)}
         </>
     )
 
+}
+
+const stopAnimation = (requestID) =>{
+    return () => cancelAnimationFrame(requestID);
 }
 
 const getDataToPass = (props, setSort, setComplete, steps, index) =>{
@@ -98,8 +152,9 @@ const getDataToPass = (props, setSort, setComplete, steps, index) =>{
 
         //Because of how requestAnimationFrame works, it will loop over one more time
         if (dataToPass == undefined){
-            dataToPass = steps[index-1];
+            dataToPass = steps[index];
         }
+
 
     }
 
@@ -122,12 +177,11 @@ const getDataToPassg = (data, step) =>{
                 let indexTwo = [focus[1]];
 
 
-                console.log("index1: " + indexOne + " index2: " + indexTwo)
                 let temp = data[indexOne];
                 tempData[indexOne] = tempData[indexTwo];
                 tempData[indexTwo] = temp;
 
-                console.log("swapped: " + tempData[indexOne] + " and " + tempData[indexTwo])
+
                 swapped = true;
             } else {
                 // console.log("NOT SWAPPING")
@@ -175,9 +229,6 @@ function calculateGraph(data, step){
         }
 
     }
-
-    console.log("before data: " + data)
-    console.log("TEMPDATA TO RETURN: " + tempData);
     return (tempData);
 }
 
@@ -205,7 +256,6 @@ const drawBars = (data, props, algorithm, decoration, complete) => {
     if (decoration == "bars"){
         return(
             <div className={"bars-wrapper"} style={{height: {height}}}>
-                <h1>{"Completed: " + complete}</h1>
                 <button className={"close-button"} value={algorithm} onClick={()=>props.removeAlgorithm(props.graphID)}>x</button>
                 <div className={"bars"} style={{
                     height: `${(Math.max(data))}`}}>
@@ -216,7 +266,7 @@ const drawBars = (data, props, algorithm, decoration, complete) => {
     }else if (decoration == "numerics"){
         return(
             <div id = {"sort"}>
-                <h1>{"sort: " + props.sort}</h1>
+
                 <button className={"close-button"} value={algorithm} onClick={()=>props.removeAlgorithm(props.graphID)}>x</button>
                 <div className={"numerics"} style={{
                     height: `${(Math.max(data))}`}}>{

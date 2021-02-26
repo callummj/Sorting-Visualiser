@@ -16,6 +16,6 @@
 /* CSS for each array bar*/
 .arraybar {
     margin: 2px;
-    width: 2vw;
+    width: 0.5vw;
     display: inline-block;
 }

@@ -1,5 +1,5 @@
 //Returns the steps of bubble sort
-function Bubblesort(originalData) {
+export default function Bubblesort(originalData) {
     let data = [...originalData];
     let steps = [];
     steps.push([[...data], []]);
@@ -18,13 +18,6 @@ function Bubblesort(originalData) {
                 data[i] = data[i + 1];
                 data[i + 1] = temp;
                 swapped = true;
-
-
-                //steps.push([...data]);
-
-
-                //steps.push([...data])
-
             }
             steps.push([
                 [...data],
@@ -39,5 +32,5 @@ function Bubblesort(originalData) {
         [...change]
     ]);
     return steps;
-}export default Bubblesort;
+}
 
